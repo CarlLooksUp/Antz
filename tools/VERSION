@@ -1,0 +1,9 @@
+This tools package was published on Mon Oct 24 01:09:19 UTC 2011.
+
+Last change in the ants/ folder was:
+commit 32bc2f330562cf423ce83c5f760eb31d783b5f8d
+Date:   Sun Oct 23 21:07:33 2011 -0400
+
+    Included VERSION files in tools and starter packages.
+
+Check https://github.com/aichallenge/aichallenge/ants/ for new versions.
