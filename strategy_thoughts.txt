@@ -1,0 +1,84 @@
+Strategy can be separated into macro and micro, as in RTS's. Macro consists of
+distributing ants to different locations around the map with the goal of
+increasing map control and positioning ants to defend one's own hill or raze an
+enemy hill. Micro consists of controlling small groups of ants to efficiently
+pick up food, raze hills, and engage in combat with enemy ants.
+
+
+--------  MACRO --------
+
+General Thoughts
+
+In general, the highest priority of macro should be map control. The player with
+the greatest map control can spawn ants at a greater rate than the other
+players, which in turn allows him to increase his map control, snowballing into
+a numbers advantage. This is particularly important at the beginning of the
+game.
+
+As the game progresses, it becomes more important to focus attention on
+defending one's own hill and attacking enemy hills. The only way to get points
+is to raze hills, so there may even be times that it's worth it to abandon one's
+own hill in order to successfully raze an enemy hill.
+
+Perhaps there could be some system of identifying combat zones, so we can direct
+surplus ants where they're needed while still maintaining good map control to
+maintain our ant creation. That system would also be good for controlling
+exploring efficiently.
+
+Implementation
+
+As I see it, the main problems in macro implementation are navigation and ant
+allocation. The player whose ants get stuck around his hill is at an immediate
+disadvantage due to his decreased map control. And of course, the player whose
+ants are focused in a place where their numbers cannot be used well is also at a
+disadvantage.
+
+Disregarding cost, potential fields seem like the perfect solution for ant
+allocation. There are certain places we want our ants to congregate, like near
+an enemy hill. We also don't want our ants to clump together too much, as that
+exacts a map control penalty. If we try to implement potential fields calculated
+on each location, it could become prohibitively expensive, especially if the
+field radius is large and we obtain many ants. However, potential fields could
+be extremely effective if we reduce the map to a smaller array of sectors. We
+can assign ants to sectors using potential fields, then use a different approach
+to fine tune their movement.
+
+If we do decide to implement an approach using sectors, it will be very
+important to determine which areas are reachable from where. For example, if our
+hill is next to a "river" of water, we don't want to try to immediately send
+ants across the river. Perhaps we can create sectors as all reachable locations
+within a certain distance from a center point, then create more sectors as we
+explore more of the map.
+
+
+-------- MICRO --------
+
+General Thoughts
+
+The two main areas of micro are combat and food collection. Collecting food
+seems like the simpler of the two. Basically, the ant closest to the food should
+go collect it. If two ants are equally close, send the ant whose path is least
+changed by the detour.
+
+The details of combat will probably be relatively complicated, but the basic
+strategy of it seems straightforward. Using the terminology of the Focus Battle
+Resolution page, we want more of our ants to focus their ants than the other way
+around. The best way to accomplish this is to surround the enemy. If we are
+stuck in a narrow corridor, we should form a wall and manouver our ants together
+in that formation. We can also defend the end of a "corridor" by placing our
+ants in a semicircle around the exit. No ants should be able to pass that
+barrier.
+
+Implementation
+
+I'm not really sure, here. A-star seems like a relatively efficient algorithm we
+could use for navigation and determining closest ant. If we do use sectors, we
+could just search the ants in the same sector as the food to reduce complexity.
+
+Maybe we could develop a system of safe and unsafe locations for combat and move
+our ants to the safe square closest to the enemy. It seems like this would
+induce a natural surrounding behavior.
+
+In order to govern ant behavior, I think we should definitely use a state
+machine. Ants can be in states EXPLORE, GATHER, or COMBAT. The priority order
+should be COMBAT > GATHER > EXPLORE.
